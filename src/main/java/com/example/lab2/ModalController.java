@@ -35,12 +35,12 @@ public class ModalController {
                 char[] textArray = text.toCharArray();
                 for (char symbol : textArray) {
                     String stringSymbol = String.valueOf(symbol);
-                    if (letters.contains(stringSymbol)) {
-                        Set<String> availableLetters = peopleMap.get(name);
-                        if (availableLetters.contains(stringSymbol)) {
-                            output.append(stringSymbol);
-                        }
+
+                    Set<String> availableLetters = peopleMap.get(name);
+                    if (availableLetters.contains(stringSymbol)) {
+                        output.append(stringSymbol);
                     }
+
                 }
                 outputArea.clear();
                 outputArea.appendText(output.toString());

@@ -8,7 +8,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -29,6 +28,8 @@ public class HelloController {
     public Button addLetterButton;
     public TextField charField;
     public Button startButton;
+    public Button deleteNameButton;
+    public Button deleteLetterButton;
 
     private Set<String> letters = new HashSet<>(of("A", "B", "C"));
 
@@ -83,6 +84,37 @@ public class HelloController {
             }
         });
 
+        deleteNameButton.setOnAction(actionEvent -> {
+            String name = nameField.getText();
+            try {
+                if (validateField(name, false)) {
+                    Person data = table.getItems().stream()
+                            .filter(it -> it.getName().equals(name))
+                            .findFirst().orElseThrow(() -> new RuntimeException("Субъект не найден"));
+                    table.getItems().remove(data);
+                }
+            } catch (RuntimeException e) {
+                alert(e.getMessage());
+            }
+        });
+
+        deleteLetterButton.setOnAction(actionEvent -> {
+            String letter = charField.getText();
+            try {
+                if (validateField(letter, true)) {
+                    TableColumn<Person, ?> column = table.getColumns().stream()
+                            .filter(it -> it.getText().equals(letter))
+                            .findFirst().orElseThrow(() -> new RuntimeException("Субъект не найден"));
+                    table.getColumns().remove(column);
+                    table.getItems().forEach(it -> {
+                        it.getAvailableLetters().remove(letter);
+                    });
+                }
+            } catch (RuntimeException e) {
+                alert(e.getMessage());
+            }
+        });
+
         addLetterButton.setOnAction(actionEvent -> {
             String letter = charField.getText();
             if (validateField(letter, true)) {
@@ -123,9 +155,9 @@ public class HelloController {
                 FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("modal.fxml"));
                 Scene scene = new Scene(fxmlLoader.load(), 591, 370);
                 Stage stage = new Stage();
-                ModalController elevatorController = fxmlLoader.getController();
-                elevatorController.initialize(table.getItems(), letters);
-                stage.setTitle("Лифт");
+                ModalController modalController = fxmlLoader.getController();
+                modalController.initialize(table.getItems(), letters);
+                stage.setTitle("Main");
                 stage.setScene(scene);
                 stage.showAndWait();
             } catch (IOException e) {
@@ -141,13 +173,14 @@ public class HelloController {
 
     private boolean validateField(String field, Boolean allowWhiteSpace) {
         if (allowWhiteSpace) {
-            if (field.isEmpty()) {
-                alert("Поле не может быть пустым");
+            if (field.length() != 1) {
+                alert("Поле не может быть пустым или \n" +
+                        "строка не может содержать больше 1 символа");
                 return false;
             }
         } else {
             if (field.isBlank()) {
-                alert("Поле не может содержать пробелы или быть пустым");
+                alert("Поле не может содержать только пробелы или быть пустым");
                 return false;
             }
         }
@@ -158,7 +191,6 @@ public class HelloController {
     private void alert(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setContentText(message);
-
         alert.showAndWait();
     }
 
