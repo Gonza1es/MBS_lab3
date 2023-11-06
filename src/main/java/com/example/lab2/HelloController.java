@@ -13,8 +13,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.List.*;
 
@@ -30,6 +29,12 @@ public class HelloController {
     public Button startButton;
     public Button deleteNameButton;
     public Button deleteLetterButton;
+    public TextField fromField;
+    public TextField toField;
+    public TextField rightsField;
+    public Button grantButton;
+    public Button createButton;
+    public Button removeButton;
 
     private Set<String> letters = new HashSet<>(of("A", "B", "C"));
 
@@ -149,6 +154,116 @@ public class HelloController {
             }
         });
 
+        grantButton.setOnAction(actionEvent -> {
+            String from = fromField.getText();
+            String to = toField.getText();
+            if (validateField(from, false) && validateField(to, false)) {
+                if (validateField(rightsField.getText(), false)) {
+                    Set<String> rights = new HashSet<>(Arrays.stream(rightsField.getText().split(",")).toList());
+
+                    Map<String, Person> peopleMap = new HashMap<>();
+                    table.getItems().forEach(it -> peopleMap.put(it.getName(), it));
+
+                    Person fromPerson = peopleMap.get(from);
+                    Person toPerson = peopleMap.get(to);
+                    if (fromPerson == null)
+                        alert("Пользователь, передающий права, не найден");
+                    else if (toPerson == null)
+                        alert("Пользователь, принимающий права, не найден");
+                    else {
+                        fromPerson.getAvailableLetters().forEach(it -> {
+                            if (!rights.contains(it)) rights.remove(it);
+                        });
+
+                        toPerson.getAvailableLetters().addAll(rights);
+
+                        table.refresh();
+                    }
+                }
+            }
+        });
+
+        createButton.setOnAction(actionEvent -> {
+            String to = toField.getText();
+            String rightsString = rightsField.getText();
+            if (validateField(to, false) && validateField(rightsString, false)) {
+                if (validateRights(rightsString.split(","))) {
+                    Set<String> rights = new HashSet<>(Arrays.stream(rightsField.getText().split(",")).toList());
+                    Map<String, Person> peopleMap = new HashMap<>();
+                    table.getItems().forEach(it -> peopleMap.put(it.getName(), it));
+
+                    Person toPerson = peopleMap.get(to);
+                    Person newPerson = null;
+                    if (toPerson == null)
+                        newPerson = new Person(to, new HashSet<>());
+                    Person finalNewPerson = newPerson;
+                    rights.forEach(it -> {
+                        if (!letters.contains(it)) {
+                            TableColumn<Person, Boolean> column = new TableColumn<>(it);
+                            column.setCellValueFactory(cellData ->
+                                    new SimpleBooleanProperty(cellData.getValue().getAvailableLetters().contains(it)));
+                            column.setCellFactory(p -> {
+                                CheckBox checkBox = new CheckBox();
+                                TableCell<Person, Boolean> tableCell = new TableCell<>() {
+                                    @Override
+                                    protected void updateItem(Boolean item, boolean empty) {
+
+                                        super.updateItem(item, empty);
+                                        if (empty || item == null)
+                                            setGraphic(null);
+                                        else {
+                                            setGraphic(checkBox);
+                                            checkBox.setSelected(item);
+                                        }
+                                    }
+                                };
+                                checkBox.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+                                    tableCell.getTableRow().getItem().updateSet(!checkBox.isSelected(), it);
+                                });
+                                tableCell.setAlignment(Pos.CENTER);
+                                tableCell.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+
+                                return tableCell;
+                            });
+                            letters.add(it);
+                            table.getColumns().add(column);
+                        }
+                        Objects.requireNonNullElse(toPerson, finalNewPerson).updateSet(true, it);
+                    });
+
+                    if (toPerson == null) {
+                        table.getItems().add(newPerson);
+                    } else {
+                        table.getItems().stream()
+                                .filter(it -> it.getName().equals(toPerson.getName()))
+                                .peek(it -> it.setAvailableLetters(toPerson.getAvailableLetters()));
+
+                        table.refresh();
+                    }
+                }
+            }
+        });
+
+        removeButton.setOnAction(actionEvent -> {
+            String to = toField.getText();
+            String rightsString = rightsField.getText();
+            if (validateField(to, false) && validateField(rightsString, false)) {
+                Set<String> rights = new HashSet<>(Arrays.stream(rightsString.split(",")).toList());
+
+                Map<String, Person> peopleMap = new HashMap<>();
+                table.getItems().forEach(it -> peopleMap.put(it.getName(), it));
+
+                Person toPerson = peopleMap.get(to);
+                if (toPerson == null)
+                    alert("Пользователь не найден");
+                else {
+                    toPerson.getAvailableLetters().removeAll(rights);
+
+                    table.refresh();
+                }
+            }
+        });
+
         startButton.setOnAction(actionEvent -> {
             try {
                 table.refresh();
@@ -184,6 +299,17 @@ public class HelloController {
                 return false;
             }
         }
+        return true;
+    }
+
+    private boolean validateRights(String[] rights) {
+        for (String string : rights) {
+            if (string.length() != 1) {
+                alert("Право не может быть длиной больше 1 символа");
+                return false;
+            }
+        }
+
         return true;
     }
 

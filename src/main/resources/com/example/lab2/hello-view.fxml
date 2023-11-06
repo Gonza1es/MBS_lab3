@@ -6,7 +6,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<SplitPane dividerPositions="0.33121657754010686" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="581.0" prefWidth="870.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab2.HelloController">
+<SplitPane dividerPositions="0.33121657754010686" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="584.0" prefWidth="870.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lab2.HelloController">
   <items>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
          <children>
@@ -14,9 +14,15 @@
             <TextField fx:id="nameField" layoutX="14.0" layoutY="29.0" prefHeight="25.0" prefWidth="83.0" promptText="Имя" />
             <Button fx:id="addLetterButton" layoutX="137.0" layoutY="85.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="121.0" text="Добавить столбец" />
             <TextField fx:id="charField" layoutX="14.0" layoutY="85.0" prefHeight="25.0" prefWidth="83.0" promptText="Символ" />
-            <Button fx:id="startButton" layoutX="21.0" layoutY="250.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="244.0" text="Начать" />
-             <Button fx:id="deleteNameButton" layoutX="137.0" layoutY="145.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="121.0" text="Удалить строку" />
-             <Button fx:id="deleteLetterButton" layoutX="137.0" layoutY="195.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="121.0" text="Удалить столбец" />
+            <Button fx:id="startButton" layoutX="20.0" layoutY="463.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="244.0" text="Начать" />
+             <Button fx:id="deleteNameButton" layoutX="14.0" layoutY="147.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="109.0" text="Удалить строку" />
+             <Button fx:id="deleteLetterButton" layoutX="148.0" layoutY="147.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="110.0" text="Удалить столбец" />
+            <TextField fx:id="fromField" layoutX="14.0" layoutY="221.0" prefHeight="26.0" prefWidth="83.0" promptText="От кого" />
+            <TextField fx:id="toField" layoutX="14.0" layoutY="265.0" prefHeight="26.0" prefWidth="83.0" promptText="Кому" />
+            <TextField fx:id="rightsField" layoutX="14.0" layoutY="311.0" prefHeight="26.0" prefWidth="83.0" promptText="Права" />
+            <Button fx:id="grantButton" layoutX="148.0" layoutY="221.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="110.0" text="Grant" />
+            <Button fx:id="createButton" layoutX="148.0" layoutY="265.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="110.0" text="Create" />
+            <Button fx:id="removeButton" layoutX="148.0" layoutY="311.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="110.0" text="Remove" />
 
          </children></AnchorPane>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
